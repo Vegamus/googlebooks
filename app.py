@@ -1,10 +1,7 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String
 import requests
-from flask import Flask, request, jsonify
-from flask import Flask, request, jsonify, render_template
-# ...
 
 
 app = Flask(__name__)
@@ -18,10 +15,10 @@ class Book(db.Model):
 
     def __repr__(self):
         return f"<Book {self.id}: {self.title} by {self.author}>"
-    @app.route("/", methods=["GET"])
-    def home():
-        return "Welcome to the Books API! Use /books to interact with the API."
 
+@app.route('/', methods=["GET"])
+def home():
+    return render_template('home.html')
 
 @app.route("/books", methods=["POST"])
 def create_book():
@@ -57,11 +54,23 @@ def delete_book(book_id):
     db.session.commit()
     return jsonify({"message": "Book deleted", "book": str(book)})
 
-@app.route("/search", methods=["GET"])
-def search_books():
-    query = request.args.get("q")
-    if not query:
-        return jsonify({"error": "Please provide a search query using the 'q' parameter."}), 400
+@app.route('/search')
+def search():
+    author = request.args.get('author', '')
+    title = request.args.get('title', '')
+    publisher = request.args.get('publisher', '')
+    published_year = request.args.get('published_year', '')
+
+    query = ''
+    if author:
+        query += f'+inauthor:{author}'
+    if title:
+        query += f'+intitle:{title}'
+    if publisher:
+        query += f'+inpublisher:{publisher}'
+    if published_year:
+        query += f'+inpdate:{published_year}'
+
 
     api_key = "AIzaSyD4vJr6uxxYfmJQN_6tZmJ87w8U_kHAZlo"  # Replace with your actual API key
     url = f"https://www.googleapis.com/books/v1/volumes?q={query}&key={api_key}"
