@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book Search Results</title>
+</head>
+<body>
+  <h1>Book Search Results</h1>
+  <ul>
+    {% for book in books %}
+      <li>
+        <h2>{{ book.title }}</h2>
+        <p>By: {{ ", ".join(book.authors) }}</p>
+        <p>Publisher: {{ book.publisher }}</p>
+        <p>Published: {{ book.publishedDate }}</p>
+        {% if book.pageCount %}
+          <p>Page count: {{ book.pageCount }}</p>
+        {% endif %}
+        {% if book.imageLinks.thumbnail %}
+          <img src="{{ book.imageLinks.thumbnail }}" alt="{{ book.title }} cover image">
+        {% endif %}
+        <p>{{ book.description }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
